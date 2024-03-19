@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ic1(mqas6akq-xz2)5b9u*$o5!g1y!g*u3l^xk*t!9u5nm28na
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.88.197']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,7 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',  # new
     'drf_yasg',
+    # login,logout
+    'dj_rest_auth',
+
+    # register
+    'allauth',  # new
+    'allauth.account',  # new
+    'allauth.socialaccount',  # new
+    'dj_rest_auth.registration',  # new
 
     'bookapp',
 
@@ -53,9 +62,22 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "allauth.account.middleware.AccountMiddleware",  # new
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+# new
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+}
 
 TEMPLATES = [
     {
@@ -127,3 +149,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
