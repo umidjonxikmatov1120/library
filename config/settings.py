@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ic1(mqas6akq-xz2)5b9u*$o5!g1y!g*u3l^xk*t!9u5nm28na
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.88.197']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_yasg',
 
     'bookapp',
 

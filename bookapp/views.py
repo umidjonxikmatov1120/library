@@ -7,16 +7,51 @@ from .serializers import BookSerializer
 from .models import Book
 
 
+# CRUD - Create, Retrieve(Read), Update, Delete
 # class based views
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
 
-# function based views
-@api_view(['GET'])
-def book_list_view(request, *args, **kwargs):
-    books = Book.objects.all()
-    serializer = BookSerializer(books, many=True)
+class BookCreateView(generics.CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
 
-    return Response(serializer.data)
+
+class BookRetrieveView(generics.RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class BookDeleteView(generics.DestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class BookUpdateView(generics.UpdateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class BookListCreateView(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+class BookUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+
+# Function based views
+@api_view(['GET'])
+def book_list(request):
+    books = Book.objects.all()
+    serializer_data = BookSerializer(books, many=True).data
+    data = {
+        "status": f"{len(books)} ta kitob mavjud",
+        "books": serializer_data
+    }
+
+    return Response(data)
