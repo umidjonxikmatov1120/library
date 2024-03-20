@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.account',  # new
     'allauth.socialaccount',  # new
     'dj_rest_auth.registration',  # new
+    "corsheaders",
 
     'bookapp',
 
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -64,21 +67,37 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "allauth.account.middleware.AccountMiddleware",  # new
+
 ]
 
 ROOT_URLCONF = 'config.urls'
 
 # new
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'],
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated'],
+#
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.BasicAuthentication'
+#     ],
+# }
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication'
-    ],
-}
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_HEADERS = default_headers + (
+    'cache-control',
+)
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
