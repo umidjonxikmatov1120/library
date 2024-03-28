@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from rest_framework import generics
+from django.shortcuts import render, get_object_or_404
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -49,45 +49,69 @@ class BookListView(APIView):
 
     def get(self, request):
         books = Book.objects.all()
-        serializer = BookSerializer(books, many=True)
-        return Response(serializer.data)
+        serializer_data = BookSerializer(books, many=True).data
+        data = {
+            "status": f"{len(books)} ta kitob mavjud",
+            "books": serializer_data
+        }
+
+        return Response(data)
 
     def post(self, request):
-        serializer = BookSerializer(data=request.data)
+        data = request.data
+        serializer = BookSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            data = {"status": "Ma'lumotlar bazasiga kitob qo'shildi",
+                    "books": data}
+            return Response(data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookDetailView(APIView):
     def get(self, request, pk):
-        book = Book.objects.get(id=pk)
-        serializer = BookSerializer(book)
-        return Response(serializer.data)
+        try:
+            book = Book.objects.get(id=pk)
+            serializer_data = BookSerializer(book).data
+
+            data = {
+                'status': "Successfully",
+                "book": serializer_data
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({
+                'status': "False",
+                'message': 'Kitob toplimadi'
+            }, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk):
-        book = Book.objects.get(id=pk)
-        serializer = BookSerializer(book, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        try:
+            book = get_object_or_404(Book.objects.all(), id=pk)
+            data = request.data
+            serializer = BookSerializer(instance=book, data=data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                book_saved = serializer.save()
+            return Response({
+                'status': 'True', 'message': f"{book_saved} kitob yangilandi."
+            }, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({
+                'status': 'False',
+                'message': 'Kitob topilmadi'
+            }, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk):
-        book = Book.objects.get(id=pk)
-        book.delete()
-        return Response(status=204)
-
-
-# Function based views
-# @api_view(['GET'])
-# def book_list(request):
-#     books = Book.objects.all()
-#     serializer_data = BookSerializer(books, many=True).data
-#     data = {
-#         "status": f"{len(books)} ta kitob mavjud",
-#         "books": serializer_data
-#     }
-#
-#     return Response(data)
+        try:
+            book = get_object_or_404(Book, id=pk)
+            book.delete()
+            return Response({
+                'status': 'Succesfully delete',
+                'message': "Kitob o'chirilidi"
+            }, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({
+                'status': 'False',
+                'message': 'Kitob topilmadi'
+            }, status=status.HTTP_404_NOT_FOUND)
