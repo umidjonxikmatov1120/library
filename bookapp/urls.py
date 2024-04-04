@@ -1,15 +1,10 @@
 # from .views import BookListView, BookRetrieveView, BookDeleteView, BookUpdateView, BookCreateView, BookListCreateView, BookUpdateDeleteView
-from .views import BookListView, BookDetailView
+from rest_framework.routers import SimpleRouter
+
+from .views import BookListView, BookDetailView, BookViewSet
 from django.urls import path
 
-urlpatterns = [
-    path('', BookListView.as_view()),
-    # path('create/', BookCreateView.as_view()),
-    # path('<int:pk>/', BookRetrieveView.as_view()),
-    # path('<int:pk>/delete/', BookDeleteView.as_view()),
-    # path('<int:pk>/update/', BookUpdateView.as_view()),
-    # path('listcreate/', BookListCreateView.as_view()),
-    # path('<int:pk>/updatedelete/', BookUpdateDeleteView.as_view()),
+router = SimpleRouter()
+router.register('books', BookViewSet)
 
-    path('<int:pk>/', BookDetailView.as_view()),
-]
+urlpatterns = router.urls
