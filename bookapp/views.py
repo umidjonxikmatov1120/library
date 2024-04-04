@@ -45,7 +45,6 @@ from .models import Book
 #     queryset = Book.objects.all()
 #     serializer_class = BookSerializer
 
-
 class BookListView(APIView):
 
     def get(self, request):
